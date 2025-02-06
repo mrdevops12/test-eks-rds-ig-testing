@@ -37,14 +37,13 @@ jobs:
           cd eks-rds-aws
           terraform validate
 
-      - name: 📖 Terraform Plan
-        run: |
-          cd eks-rds-aws
-          terraform plan -var-file="dev.tfvars" -out=tfplan
+ #     - name: 📖 Terraform Plan
+ #      cd eks-rds-aws
+ #         terraform plan -var-file="dev.tfvars" -out=tfplan
 
       - name: 🚀 Terraform Apply (Deploy Infrastructure)
         if: github.ref == 'refs/heads/main'
         run: |
           cd eks-rds-aws
-          terraform destroy -auto-approve tfplan
+          terraform destroy -var-file="dev.tfvars" -auto-approve tfplan
 
