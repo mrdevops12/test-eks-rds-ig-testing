@@ -1,14 +1,14 @@
-name: Terraform Deployment
+name: Terraform Destroy
 
 on:
   push:
     branches:
-      - main  # ✅ Runs only when changes are pushed to the main branch
-  workflow_dispatch:  # ✅ Allows manual trigger
+      - destroy  # ✅ Runs only when pushing to "destroy" branch (for safety)
+  workflow_dispatch:  # ✅ Allows manual execution from GitHub UI
 
 jobs:
   terraform:
-    name: Apply Terraform Configuration
+    name: Destroy Terraform Infrastructure
     runs-on: ubuntu-latest
 
     steps:
@@ -37,13 +37,8 @@ jobs:
           cd eks-rds-aws
           terraform validate
 
- #     - name: 📖 Terraform Plan
- #      cd eks-rds-aws
- #         terraform plan -var-file="dev.tfvars" -out=tfplan
-
-      - name: 🚀 Terraform Apply (Deploy Infrastructure)
-        if: github.ref == 'refs/heads/main'
+      - name: 🚀 Terraform Destroy (Remove Infrastructure)
+        if: github.ref == 'refs/heads/destroy'  # ✅ Runs only if on "destroy" branch
         run: |
           cd eks-rds-aws
-          terraform destroy -var-file="dev.tfvars" -auto-approve tfplan
-
+          terraform destroy -var-file="dev.tfvars" -auto-approve
