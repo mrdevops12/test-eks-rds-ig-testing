@@ -3,7 +3,7 @@ name: Terraform Destroy
 on:
   push:
     branches:
-      - destroy  # ✅ Runs only when pushing to "destroy" branch (for safety)
+      - destroy  # ✅ Only runs when pushing to "destroy" branch (safety)
   workflow_dispatch:  # ✅ Allows manual execution from GitHub UI
 
 jobs:
@@ -38,7 +38,6 @@ jobs:
           terraform validate
 
       - name: 🚀 Terraform Destroy (Remove Infrastructure)
-        if: github.ref == 'refs/heads/destroy'  # ✅ Runs only if on "destroy" branch
         run: |
           cd eks-rds-aws
           terraform destroy -var-file="dev.tfvars" -auto-approve
