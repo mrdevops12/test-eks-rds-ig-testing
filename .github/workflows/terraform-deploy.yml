@@ -25,31 +25,26 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1  # ✅ Change if required
-
-      - name: ⚡ Cache Terraform Plugins & Modules
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.terraform.d/plugin-cache
-            .terraform
-          key: ${{ runner.os }}-terraform-${{ hashFiles('**/*.tf') }}
-          restore-keys: |
-            ${{ runner.os }}-terraform-
-
-      - name: 📌 Terraform Format Check
-        run: terraform fmt -check
+          aws-region: us-east-1
 
       - name: ✅ Terraform Init
-        run: terraform init
+        run: |
+          cd eks-rds-aws
+          terraform init
 
       - name: 🔍 Terraform Validate
-        run: terraform validate
+        run: |
+          cd eks-rds-aws
+          terraform validate
 
       - name: 📖 Terraform Plan
-        run: terraform plan -var-file="dev.tfvars" -out=tfplan
+        run: |
+          cd eks-rds-aws
+          terraform plan -var-file="dev.tfvars" -out=tfplan
 
       - name: 🚀 Terraform Apply (Deploy Infrastructure)
-        if: github.ref == 'refs/heads/main'  # ✅ Ensures only main branch applies
-        run: terraform apply -auto-approve tfplan
+        if: github.ref == 'refs/heads/main'
+        run: |
+          cd eks-rds-aws
+          terraform apply -auto-approve tfplan
 
